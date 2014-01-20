@@ -1,45 +1,45 @@
-#include <cstdio>
-#include <cstring>
-#include <algorithm>
-#define REP( i, n ) for ( int i = 1; i <= n; i ++ )
-#define REP_0( i, n ) for ( int i = 0; i < n; i ++ )
-#define REP_0N( i, n ) for ( int i = 0; i <= n; i ++ )
-#define REP_G( i, x ) for ( int i = pos[ x ]; i; i = g[ i ].frt )
-#define FOR( i, a, b ) for ( int i = a; i <= b; i ++ )
-#define DWN( i, a, b ) for ( int i = b; i >= a; i -- )
-#define RST( a ) memset ( a, 0, sizeof ( a ) )
-#define FLC( a, x ) memset( a, x, sizeof ( a ) )
-#define CPY( a, b ) memcpy( a, b, sizeof ( a ) )
-#define NSIZE 280010
-#define N2SIZE 560020
-#define MOD 910007
-#define SG seg[ x ]
-#define SGL seg[ x ].ch[ 0 ]
-#define SGR seg[ x ].ch[ 1 ]
-#define SGZ seg[ sgz ]
-#define TXPC trie[ tx ].pos[ c ]
-#define TXEI trie[ tx ].edge[ i ]
-#define TEZ trie[ tx ].esz
-#define TXD trie[ tx ].dep
-#define TXP trie[ tx ].par
-#define TZ trie[ tsz ]
-#define SMTT sam[ tt ]
-#define SML sam[ tx ].l
-#define SMEC sam[ tx ].edge[ c ]
-#define SMP sam[ tx ].par
-#define SMTP sam[ tt ].par
-#define SMRT sam[ rt ]
-#define SMTV sam[ tv ]
-#define RTS st[ tx ].sta
-#define RTL st[ tx ].l
-#define RTN st[ tn ]
-#define RTH st[ tx ].hash
-#define RTX st[ x ]
-#define RTY st[ y ]
-#define PTZ part[ psz ]
-#define PTY part[ tx ].y
-#define PTF part[ tx ].frt
-#define HZ h[ szh ]
+# include <cstdio>
+# include <cstring>
+# include <algorithm>
+# define REP( i, n ) for ( int i = 1; i <= n; i ++ )
+# define REP_0( i, n ) for ( int i = 0; i < n; i ++ )
+# define REP_0N( i, n ) for ( int i = 0; i <= n; i ++ )
+# define REP_G( i, x ) for ( int i = pos[ x ]; i; i = g[ i ].frt )
+# define FOR( i, a, b ) for ( int i = a; i <= b; i ++ )
+# define DWN( i, a, b ) for ( int i = b; i >= a; i -- )
+# define RST( a ) memset ( a, 0, sizeof ( a ) )
+# define FLC( a, x ) memset( a, x, sizeof ( a ) )
+# define CPY( a, b ) memcpy( a, b, sizeof ( a ) )
+# define NSIZE 280010
+# define N2SIZE 560020
+# define MOD 910007
+# define SG seg[ x ]
+# define SGL seg[ x ].ch[ 0 ]
+# define SGR seg[ x ].ch[ 1 ]
+# define SGZ seg[ sgz ]
+# define TXPC trie[ tx ].pos[ c ]
+# define TXEI trie[ tx ].edge[ i ]
+# define TEZ trie[ tx ].esz
+# define TXD trie[ tx ].dep
+# define TXP trie[ tx ].par
+# define TZ trie[ tsz ]
+# define SMTT sam[ tt ]
+# define SML sam[ tx ].l
+# define SMEC sam[ tx ].edge[ c ]
+# define SMP sam[ tx ].par
+# define SMTP sam[ tt ].par
+# define SMRT sam[ rt ]
+# define SMTV sam[ tv ]
+# define RTS st[ tx ].sta
+# define RTL st[ tx ].l
+# define RTN st[ tn ]
+# define RTH st[ tx ].hash
+# define RTX st[ x ]
+# define RTY st[ y ]
+# define PTZ part[ psz ]
+# define PTY part[ tx ].y
+# define PTF part[ tx ].frt
+# define HZ h[ szh ]
 using namespace std;
 typedef unsigned long long LL;
 struct edge { int y, frt; } part[ NSIZE ];
@@ -126,7 +126,7 @@ inline int FindNode ( int x, int l )
 }
 void MakeTrie ()
 {
-	end[ 1 ] = 1, trie[ 1 ].val = -1, st[ 1 ].sta = 1;;
+	end[ 1 ] = 1, trie[ 1 ].val = -1, st[ 1 ].sta = 1;
 	REP ( i, m )
 		if ( t[ i ].ty == 1 )
 		{
