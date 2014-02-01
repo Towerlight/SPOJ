@@ -3,118 +3,114 @@
 #include <algorithm>
 #define REP( i, n ) for ( int i = 1; i <= n; i ++ )
 #define REP_G( i, x ) for ( int i = pos[ x ]; i; i = g[ i ].frt )
-#define RST( a, x ) memset ( a, x, sizeof ( a ) )
+#define RST( a, x ) memset ( a, x, sizeof ( a ) );
+#define SRT 1, 1, tz
+#define SLC x * 2, l, mid
+#define SRC x * 2 + 1, mid + 1, r
 #define GY g[ i ].y
-#define GV g[ i ].val
-#define GZ g[ sz ]
-#define TX tree[ x ]
-#define TXL tree[ tree[ x ].lc ]
-#define TXR tree[ tree[ x ].rc ]
-#define TXP tree[ x ].par
-#define TY tree[ y ]
-#define TZ tree[ z ]
-#define PSIZE 20010
+#define TI tree[ i ]
+#define PSIZE 100001
 using namespace std;
 struct edge
 {
-	int y, frt, val;
+    int x, val, y, frt; 
 };
-struct node
+edge tree[ PSIZE ], g[ PSIZE ];
+int n, q0, tz, sz, root, top[ PSIZE ], son[ PSIZE ], siz[ PSIZE ];
+int pos[ PSIZE ], dep[ PSIZE ], w[ PSIZE ], fa[ PSIZE ], segtree[ 4 * PSIZE ];
+char str[ 10 ];
+ 
+void AddEdge ( int x, int y )
 {
-	int par, lc, rc, val;
-	bool rt;
-	void Clean ()
-	{
-		par = lc = rc = val = 0;
-		rt = true;
-	}
-};
-edge g[ PSIZE ];
-node tree[ PSIZE ];
-int pos[ PSIZE ];
-int n, ans, sz, q0, h[ PSIZE ], w0[ PSIZE ];
-inline void Update ( int x )
-{
-	TX.val = max ( TXL.val, max ( TXR.val, w0[ x ] ) );
-}
-inline void Set ( int &v, int y, int x )
-{
-	v = x, TXP = y;
-}
-void Rotate ( int x )
-{
-	int y = TXP, z = TY.par;
-	if ( !TY.rt ) Set( y == TZ.lc ? TZ.lc : TZ.rc, z, x );
-	else TXP = z;
-	if ( x == TY.lc ) Set ( TY.lc, y, TX.rc ), Set ( TX.rc, x, y );
-	else Set ( TY.rc, y, TX.lc ), Set ( TX.lc, x, y );
-	if ( TY.rt ) TY.rt = false, TX.rt = true;
-	Update ( y );
-}
-inline void Splay ( int x )
-{
-	while ( !TX.rt ) Rotate ( x );
-}
-void Access ( int x )
-{
-	int y = 0;
-	do
-	{
-		Splay ( x );
-		TXR.rt = true, tree[ TX.rc = y ].rt = false, Update ( x );
-		x = tree[ y = x ].par;
-	} while ( x );
-}
-int Query ( int x, int y )
-{
-	Access ( y ), y = 0;
-	do
-	{
-		Splay ( x );
-		if ( !TX.par ) return max ( TXR.val, TY.val );
-		TXR.rt = true, tree[ TX.rc = y ].rt = false, Update ( x );
-		x = tree[ y = x ].par;
-	} while ( x );
-}
-inline void Modify ( int x, int val )
-{
-	Splay ( x ), w0[ x ] = val;
+    g[ ++ sz ].y = y; g[ sz ].frt = pos[ x ]; pos[ x ] = sz;
 }
 void Search ( int x )
 {
-	REP_G ( i, x )
-		if ( !tree[ GY ].par )
-		{
-			tree[ GY ].par = x, w0[ GY ] = GV, h[ i / 2 ] = GY;
-			Search ( GY );
-		}
+    siz[ x ] = 1; son[ x ] = 0;
+    REP_G ( i, x )
+        if ( GY != fa[ x ] )
+        {
+            fa[ GY ] = x;
+            dep[ GY ] = dep[ x ] + 1;
+            Search ( GY );
+            if ( siz[ GY ] > siz[ son[ x ] ] ) son[ x ] = GY;
+            siz[ x ] += siz[ GY ];
+        }
 }
-inline void AddEdge ( int x, int y, int v )
+void BuildTree ( int x, int tp )
 {
-	g[ ++ sz ].y = y, GZ.val = v, GZ.frt = pos[ x ], pos[ x ] = sz;
+    w[ x ] = ++ tz, top[ x ] = tp;
+    if ( son[ x ] ) BuildTree ( son[ x ], top[ x ] );
+    REP_G ( i, x )
+        if ( GY != son[ x ] && GY != fa[ x ] ) BuildTree ( GY, GY );
 }
-int main ()
+void Update ( int x, int l, int r, int loc, int v )
 {
-	for ( scanf ( "%d", &q0 ); q0; q0 -- )
-	{
-		RST ( pos, 0 ), tree[ 1 ].Clean (), tree[ 1 ].par = -1, sz = 1;
-		int t1, t2, t3;
-		scanf ( "%d", &n );
-		REP ( i, n - 1 )
-		{
-			tree[ i + 1 ].Clean ();
-			scanf ( "%d%d%d", &t1, &t2, &t3 );
-			AddEdge ( t1, t2, t3 ), AddEdge ( t2, t1, t3 );
-		}
-		Search ( 1 );
-		tree[ 1 ].par = 0;
-		char str[ 7 ];
-		for ( scanf ( "%s", str ); str[ 0 ] != 'D'; scanf ( "%s", str ) )
-		{
-			scanf ( "%d%d", &t1, &t2 );
-			if ( str[ 0 ] == 'C' ) Modify ( h[ t1 ], t2 );
-			else if ( str[ 0 ] == 'Q' ) printf ( "%d\n", Query ( t1, t2 ) );
-		}
-	}
-	return 0;
+    if ( loc > r || l > loc ) return;
+    if ( l == r ) 
+    { 
+        segtree[ x ] = v; 
+        return; 
+    }
+    int mid = ( l + r ) / 2;
+    Update ( SLC, loc, v );
+    Update ( SRC, loc, v );
+    segtree[ x ] = max ( segtree[ x * 2 ], segtree[ x * 2 + 1 ] );
+}
+int SegMax ( int x, int l, int r, int ql, int qr )
+{
+    if ( ql > r || qr < l ) return 0;
+    if ( ql <= l && r <= qr ) return segtree[ x ];
+    int mid = ( l + r ) / 2;
+    return max ( SegMax ( SLC, ql, qr ), SegMax ( SRC, ql, qr ) );
+}
+int Query ( int va, int vb )
+{
+    int f1 = top[ va ], f2 = top[ vb ], tmp = 0, cnt;
+    while ( f1 != f2 )
+    {
+        if ( dep[ f1 ] < dep[ f2 ] )
+        { 
+            swap ( f1, f2 ); 
+            swap ( va, vb ); 
+        }
+        tmp = max ( tmp, SegMax ( SRT, w[ f1 ], w[ va ] ) );
+        va = fa[ f1 ], f1 = top[ va ];
+    }
+    if ( va == vb ) return tmp;
+    if ( dep[ va ] > dep[ vb ] ) swap ( va, vb );
+    return max ( tmp, SegMax ( SRT, w[ son[ va ] ], w[ vb ] ) );
+}
+int main()
+{
+    freopen ( "QTREE.in", "r", stdin );
+    freopen ( "QTREE.out", "w", stdout );
+    for ( scanf ( "%d", &q0 ); q0; q0 -- )
+    {
+        int t1, t2, t3;
+        scanf ( "%d", &n );
+        root = ( n + 1 ) / 2, fa[ root ] = tz = dep[ root ] = sz = siz[ n ] = segtree[ n ] = 0;
+        RST ( pos, 0 );
+        REP ( i, n - 1 )
+        {
+            scanf ( "%d%d%d", &t1, &t2, &t3 );
+            TI.x = t1, TI.y = t2, TI.val = t3, siz[ i ] = segtree[ i ] = 0;
+            AddEdge ( t1, t2 );
+            AddEdge ( t2, t1 );
+        }
+        Search ( root );
+        BuildTree ( root, root );
+        REP ( i, n - 1 )
+        {
+            if ( dep[ TI.x ] > dep[ TI.y ] ) swap ( TI.x, TI.y );
+            Update( SRT, w[ TI.y ], TI.val );
+        }
+        for ( scanf ( "%s", str ); str[ 0 ] != 'D'; scanf ( "%s", str ) )
+        {
+            scanf ( "%d%d", &t1, &t2 );
+            if ( str[ 0 ] == 'Q' ) printf ( "%d\n", Query ( t1, t2 ) );
+            else Update ( SRT, w[ tree[ t1 ].y ], t2 );
+        }
+    }
+    return 0;
 }
